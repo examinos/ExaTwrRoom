@@ -20,6 +20,18 @@ void button_event_handler(twr_button_t *self, twr_button_event_t event, void *ev
     // Log button event
     twr_log_info("APP: Button event: %i", event);
 
+    float ppm = 0.0;
+
+
+    if (event == TWR_BUTTON_EVENT_PRESS)
+    {
+        twr_module_co2_measure();
+        twr_module_co2_get_concentration_ppm(&ppm);
+
+        twr_log_debug("CO2 level: %.4fppm", ppm);
+    }
+
+
     // Check event source
     if (event == BC_BUTTON_EVENT_CLICK)
     {
@@ -64,6 +76,11 @@ void application_init(void)
     twr_tmp112_init(&tmp112, TWR_I2C_I2C0, 0x49);
     twr_tmp112_set_event_handler(&tmp112, tmp112_event_handler, NULL);
     twr_tmp112_set_update_interval(&tmp112, 10000);
+
+    twr_module_co2_init();
+
+
+
 
     // Initialize radio
     twr_radio_init(TWR_RADIO_MODE_NODE_SLEEPING);
